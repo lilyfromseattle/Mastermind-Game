@@ -2,15 +2,15 @@ require 'colorize'
 class Mastermind
 	attr_accessor :winning_pattern
 	def initialize(winning_pattern)
-	@winning_pattern = winning_pattern
-	@guesses = []
-	@past_guesses = []
-	@reds = 0
-	@blues = 0
-	@counter = 0
-	@rows = []
-	@row_number = 0
-
+		@winning_pattern = winning_pattern
+		@guesses = []
+		@past_guesses = []
+		@reds = 0
+		@blues = 0
+		@counter = 0
+		@rows = []
+		@row_number = 0
+	end
 	def make_row(difficulty)
 		if difficulty.downcase == "easy"
 			multiply_rows(12)
@@ -21,6 +21,10 @@ class Mastermind
 		elsif difficulty.downcase == "hard"
 			multiply_rows(8)
 			@row_number = 8
+		elsif difficulty.downcase == "exit"
+			exit_game
+		else
+			puts "You must enter 'easy', 'medium', or 'hard'."
 		end
 	end
 
@@ -52,19 +56,22 @@ class Mastermind
 		elsif guess == "tan"
 			guess = "0".colorize(:tan)
 		elsif guess.downcase == "exit"
-			puts "Thanks for playing!"
-			puts "Goodbye!"
-			exit(0)
+			exit_game
     else
       puts "You must enter a color name!"
 		end
+	end
+
+	def exit_game
+		puts "Thanks for playing!"
+		puts "Goodbye!"
+		exit(0)
 	end
 
 	def pegs(peg)
 		for guess in @guesses
 			if guess == peg and @guesses.index(guess) == @winning_pattern.index(peg)
 				@reds = @reds + 1
-
 		  elsif guess == peg and @guesses.index(guess) != @winning_pattern.index(peg)
 				@blues = @blues + 1
 			end
@@ -75,6 +82,7 @@ class Mastermind
 
 	def play
 		puts "Welcome to Mastermind!"
+		puts "Type 'exit' at any time to quit the game."
 		puts "Enter difficulty level (Enter 'easy', 'medium', or 'hard'):"
 		difficulty = gets.chomp
     make_row(difficulty)
@@ -112,15 +120,13 @@ class Mastermind
       if @rows[0] != "0 0 0 0   #{"O".colorize(:red)} #{"O".colorize(:blue)}"
         puts "You lose!"
         puts "The pattern was #{@winning_pattern.join(" ")}."
-        puts "Thanks for playing!"
-        exit(0)
+        exit_game
       end
 
       if @guesses.join(" ") == @winning_pattern.join(" ")
         puts "You win!"
         puts "The pattern was #{@winning_pattern.join(" ")}."
-        puts "Thanks for playing!"
-        exit(0)
+        exit_game
       end
 
       @counter = @counter + 1
@@ -132,7 +138,7 @@ class Mastermind
 		end
 	end
 end
-end
+
 
 def random_color(array)
 	array[rand(0..5)]
